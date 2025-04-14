@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alpha Terminal - 관리자 페이지</title>
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --bg-darker: #0a0a0a;
+      --bg-card: #1e1e1e;
+      --bg-hover: #2a2a2a;
+      --text-primary: #ffffff;
+      --text-secondary: #b3b3b3;
+      --text-tertiary: #808080;
+      --accent: #ffcc00;
+      --accent-hover: #ffd740;
+      --green: #00c853;
+      --red: #ff5252;
+      --blue: #2196f3;
+      --border-radius: 6px;
+      --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding-bottom: 50px;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    header {
+      background-color: var(--bg-darker);
+      padding: 20px 0;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    header h1 {
+      display: flex;
+      align-items: center;
+    }
+    
+    header .logo {
+      height: 40px;
+      margin-right: 15px;
+    }
+    
+    .admin-panel {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 30px;
+    }
+    
+    .sidebar {
+      background-color: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      height: fit-content;
+    }
+    
+    .sidebar-menu {
+      list-style: none;
+    }
+    
+    .sidebar-menu li {
+      margin-bottom: 10px;
+    }
+    
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 10px;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+    
+    .sidebar-menu a:hover {
+      background-color: var(--bg-hover);
+      color: var(--text-primary);
+    }
+    
+    .sidebar-menu a.active {
+      background-color: var(--accent);
+      color: var(--bg-darker);
+      font-weight: 600;
+    }
+    
+    .sidebar-menu i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .main-content {
+      background-color: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 30px;
+    }
+    
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+    
+    input[type="text"],
+    input[type="password"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      background-color: var(--bg-dark);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-size: 16px;
+    }
+    
+    .btn {
+      background-color: var(--accent);
+      color: var(--bg-darker);
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+    
+    .btn-secondary {
+      background-color: var(--bg-hover);
+      color: var(--text-primary);
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--bg-card);
+    }
+    
+    .preview-container {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .preview-box {
+      background-color: var(--bg-darker);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-preview {
+      width: 100px;
+      height: 50px;
+      object-fit: contain;
+      display: block;
+      margin-right: 20px;
+    }
+    
+    .logo-upload-container {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .file-input-container {
+      position: relative;
+      margin-right: 15px;
+    }
+    
+    .file-input-container input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    
+    .file-input-container .btn {
+      pointer-events: none;
+    }
+    
+    .file-name {
+      margin-left: 10px;
+      color: var(--text-secondary);
+    }
+    
+    .dimensions-info {
+      display: block;
+      margin-top: 8px;
+      color: var(--text-tertiary);
+      font-size: 14px;
+    }
+    
+    .status-message {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: var(--border-radius);
+      display: none;
+    }
+    
+    .status-message.success {
+      background-color: rgba(0, 200, 83, 0.1);
+      border: 1px solid rgba(0, 200, 83, 0.3);
+      color: var(--green);
+      display: block;
+    }
+    
+    .status-message.error {
+      background-color: rgba(255, 82, 82, 0.1);
+      border: 1px solid rgba(255, 82, 82, 0.3);
+      color: var(--red);
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .admin-panel {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        margin-bottom: 20px;
+      }
+      
+      .sidebar-menu {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      
+      .sidebar-menu li {
+        margin-bottom: 0;
+      }
+    }
+  </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>
+        <img src="https://i.ibb.co/NZ90MsS/at-logo.png" alt="Alpha Terminal Logo" class="logo">
+        Alpha Terminal 관리자
+      </h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="admin-panel">
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li><a href="#"><i class="fas fa-home"></i> 대시보드</a></li>
+          <li><a href="#"><i class="fas fa-newspaper"></i> 뉴스 소스 관리</a></li>
+          <li><a href="#" class="active"><i class="fas fa-image"></i> 로고 및 브랜딩</a></li>
+          <li><a href="#"><i class="fas fa-palette"></i> 테마 설정</a></li>
+          <li><a href="#"><i class="fas fa-globe"></i> 다국어 설정</a></li>
+          <li><a href="#"><i class="fas fa-cog"></i> 일반 설정</a></li>
+          <li><a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> 사이트 보기</a></li>
+          <li><a href="#"><i class="fas fa-sign-out-alt"></i> 로그아웃</a></li>
+        </ul>
+      </div>
+
+      <div class="main-content">
+        <h2 class="section-title">로고 및 브랜딩 설정</h2>
+        
+        <div class="form-group">
+          <label for="site-title">사이트 제목</label>
+          <input type="text" id="site-title" value="Alpha Terminal">
+          <small class="dimensions-info">웹사이트 상단에 표시되는 제목입니다.</small>
+        </div>
+        
+        <div class="form-group">
+          <label for="site-description">사이트 설명</label>
+          <input type="text" id="site-description" value="글로벌 경제 뉴스 집계기">
+          <small class="dimensions-info">검색 엔진 및 소셜 미디어에 표시되는 설명입니다.</small>
+        </div>
+        
+        <div class="form-group">
+          <label for="logo-upload">사이트 로고</label>
+          <small class="dimensions-info">권장 크기: 500x500px, 최대 파일 크기: 2MB, 지원 형식: SVG, PNG, JPG</small>
+          
+          <div class="logo-upload-container">
+            <div class="file-input-container">
+              <button class="btn">파일 선택</button>
+              <input type="file" id="logo-upload" accept=".svg,.png,.jpg,.jpeg">
+            </div>
+            <span class="file-name" id="file-name">선택된 파일 없음</span>
+          </div>
+          
+          <div class="status-message success" id="upload-success" style="display: none;">
+            <i class="fas fa-check-circle"></i> 로고가 성공적으로 업로드되었습니다. 사이트에 변경사항이 반영되었습니다.
+          </div>
+        </div>
+        
+        <div class="preview-container">
+          <label>미리보기</label>
+          <div class="preview-box">
+            <img src="https://i.ibb.co/NZ90MsS/at-logo.png" alt="로고 미리보기" class="logo-preview" id="logo-preview">
+            <h3 id="preview-title">Alpha Terminal</h3>
+          </div>
+        </div>
+        
+        <div class="form-group" style="margin-top: 30px;">
+          <button class="btn" id="save-logo-btn">변경사항 저장</button>
+          <button class="btn btn-secondary" style="margin-left: 10px;" id="cancel-btn">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 관리자 인증 확인
+    (function checkAuthentication() {
+      const isAuthenticated = sessionStorage.getItem('adminAuthenticated') === 'true';
+      
+      if (!isAuthenticated) {
+        // 인증되지 않은 경우 로그인 페이지로 리디렉션
+        window.location.href = '/admin-login.html';
+      }
+    })();
+  
+    document.addEventListener('DOMContentLoaded', function() {
+      // 사이트 제목 입력 필드
+      const siteTitleInput = document.getElementById('site-title');
+      const previewTitle = document.getElementById('preview-title');
+      
+      // 제목 입력 시 미리보기 업데이트
+      siteTitleInput.addEventListener('input', function() {
+        previewTitle.textContent = this.value;
+      });
+      
+      // 저장 버튼 클릭 이벤트
+      saveLogoBtn.addEventListener('click', function() {
+        // 파일이 선택되지 않았으면 경고
+        if (fileName.textContent === '선택된 파일 없음' && siteTitleInput.value === 'Alpha Terminal') {
+          alert('변경할 로고나 사이트 제목을 입력해주세요.');
+          return;
+        }
+        
+        // 로딩 상태 표시
+        saveLogoBtn.disabled = true;
+        saveLogoBtn.textContent = '저장 중...';
+        
+        // 실제 구현에서는 여기서 서버에 업로드 요청
+        // 시연을 위해 타이머로 대체
+        setTimeout(function() {
+          // 사이트 제목 저장
+          saveSiteTitle(siteTitleInput.value);
+          
+          // 로고 URL 저장 (선택된 경우)
+          if (fileName.textContent !== '선택된 파일 없음') {
+            localStorage.setItem('siteLogoUrl', logoPreview.src);
+          }
+          
+          // 저장 완료
+          saveLogoBtn.disabled = false;
+          saveLogoBtn.textContent = '변경사항 저장';
+          
+          // 성공 메시지 표시
+          uploadSuccess.style.display = 'block';
+        }, 1500);
+      });
+      
+      // 취소 버튼 클릭 이벤트
+      cancelBtn.addEventListener('click', function() {
+        // 초기 상태로 복원
+        siteTitleInput.value = 'Alpha Terminal';
+        previewTitle.textContent = 'Alpha Terminal';
+        logoPreview.src = 'https://i.ibb.co/NZ90MsS/at-logo.png';
+        resetFileUpload();
+        uploadSuccess.style.display = 'none';
+      });
+      
+      // 파일 업로드 관련 요소
+      const logoUpload = document.getElementById('logo-upload');
+      const fileName = document.getElementById('file-name');
+      const logoPreview = document.getElementById('logo-preview');
+      const uploadSuccess = document.getElementById('upload-success');
+      const saveLogoBtn = document.getElementById('save-logo-btn');
+      const cancelBtn = document.getElementById('cancel-btn');
+      
+      // 파일 선택 시 파일명 표시 및 미리보기
+      logoUpload.addEventListener('change', function(e) {
+        const selectedFile = e.target.files[0];
+        
+        if (selectedFile) {
+          // 파일명 표시
+          fileName.textContent = selectedFile.name;
+          
+          // 파일 크기 검사 (2MB 제한)
+          if (selectedFile.size > 2 * 1024 * 1024) {
+            alert('파일 크기는 2MB를 초과할 수 없습니다.');
+            resetFileUpload();
+            return;
+          }
+          
+          // 파일 형식 검사
+          const validTypes = ['image/svg+xml', 'image/png', 'image/jpeg', 'image/jpg'];
+          if (!validTypes.includes(selectedFile.type)) {
+            alert('지원되는 파일 형식은 SVG, PNG, JPG입니다.');
+            resetFileUpload();
+            return;
+          }
+          
+          // 이미지 미리보기
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            logoPreview.src = event.target.result;
+            
+            // 업로드 성공 메시지 숨기기
+            uploadSuccess.style.display = 'none';
+          };
+          reader.readAsDataURL(selectedFile);
+        }
